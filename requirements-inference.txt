@@ -1,0 +1,9 @@
+# Tested on Python 3.12, Windows x64, CPU. Install CPU PyTorch first (README).
+ultralytics==8.4.19
+torch==2.7.1
+torchvision==0.22.1
+numpy==2.1.2
+opencv-python==4.11.0.86
+pillow==12.2.0
+# The README's legacy checkpoint contains pickled OmegaConf configuration.
+omegaconf==2.3.0
