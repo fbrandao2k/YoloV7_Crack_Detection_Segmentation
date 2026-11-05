@@ -21,7 +21,34 @@ Affected refs at audit time:
 No tags were advertised. Adding this prevention change introduces another descendant
 ref; refresh the inventory immediately before any rewrite.
 
-## Decision and sequence — not executed
+The commit SHAs above are from before the history rewrite recorded below.
+
+## Outcome — history rewritten on 2026-11-05
+
+The owner revoked the credential in Roboflow before the rewrite, so the old value no
+longer works. The rewrite followed the sequence below:
+
+- A fresh mirror was inventoried again; every remote tip matched the inventory.
+- `git filter-repo --sensitive-data-removal --replace-text` replaced only the old
+  literal, with `YOUR_ROBOFLOW_API_KEY`. Commit counts, authors, dates and messages
+  are unchanged, and the file lists at the branch tips are identical.
+- Each branch was force-pushed with `--force-with-lease` on its recorded old tip:
+
+| Branch | Old tip | New tip |
+| --- | --- | --- |
+| main | c66d14ce28ade7b45317fb8912521e9c85d9b1b8 | 129bd5e6244bcae654f60cc66eae5423034a6e04 |
+| codex/credential-history-guard | 09a9c74a112dfe2edb4e8dafd37bc2aa9257d1e1 | 6b2fe3df2ee39cf180565725237d225b9b009368 |
+| codex/local-inference-review | 27e9373cc02afeed949d9c2bcf75900408000b67 | 26b6c4146088462cd0f7cb15236ccf72d8607820 |
+
+- A fresh clone from GitHub was checked afterwards: no blob or commit message on any
+  branch contains the old literal.
+
+Still open: `refs/pull/1/head` and `refs/pull/2/head` belong to GitHub and still point
+to the old commits; only GitHub Support can remove them. Because the credential is
+revoked, that request is optional. Anyone with a clone made before 2026-11-05 should
+re-clone instead of pulling, and must not push the old history back.
+
+## Decision and sequence (as planned on 2026-10-04)
 
 Revoke the exposed credential in Roboflow first and provision a replacement for
 legitimate consumers through environment variables or a hidden prompt. GitHub
