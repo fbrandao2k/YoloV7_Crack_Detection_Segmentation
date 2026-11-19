@@ -95,3 +95,35 @@ Roboflow could also be removed from training preparation by supplying an
 equivalent local dataset, labels, train/validation/test splits, and
 `data.yaml`, then adapting each notebook's dataset paths. That migration
 is outside this demo.
+
+### Roboflow weight downloads and self-hosted serving
+
+Roboflow's October 1, 2026 newsletter links to its
+[deployment pricing announcement](https://roboflow.com/blog/making-it-easier-cheaper-to-deploy-with-roboflow):
+self-hosted Roboflow Inference no longer consumes credits, and Core plans
+include model-weight downloads. This does not remove hardware costs or
+change model-license terms.
+
+There are three separate operations:
+
+| Operation | What you obtain or run | Where it fits here |
+| --- | --- | --- |
+| Dataset export | Images, labels, splits, and dataset configuration | The existing training notebooks |
+| Model-weight download | A trained model artifact; format and runtime must match | `infer.py` requires a compatible Ultralytics YOLOv8 segmentation `.pt` |
+| Roboflow Inference Server | A self-hosted HTTP service for models and Workflows | A separate serving route, not started by `infer.py` |
+
+For a Roboflow-trained model, follow the
+[model-weight download guide](https://docs.roboflow.com/models/model-weights/download-roboflow-model-weights).
+Check the architecture, task, and export format before using a download with
+`infer.py`; ONNX exports and RF-DETR weights need their own runtime. The Google
+Drive checkpoint above is a separate artifact, not a Roboflow export command.
+The notebooks' `crack-bphdr` version 2 identifies their dataset; it does not
+establish that a trained model is available for inference at that identifier.
+
+For Roboflow HTTP serving, use its official
+[Inference quickstart](https://github.com/roboflow/inference#-quickstart), which
+documents Docker setup and the Inference CLI, and its
+[API examples](https://github.com/roboflow/inference#-connecting-via-api).
+Private models and Workflows require a Roboflow API key. Keep that setup separate
+from this repository's pinned local inference environment. The local CLI smoke
+checks do not validate Roboflow downloads, authentication, or HTTP serving.
